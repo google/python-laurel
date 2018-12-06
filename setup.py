@@ -25,7 +25,7 @@ dynamic_requires = []
 version = 0.1
 
 setup(
-    name='dimond',
+    name='laurel',
     version=0.4,
     author='Matthew Garrett',
     author_email='mjg59@google.com',
