@@ -71,7 +71,8 @@ def callback(link, data):
             if device.id == response[0]:
                 device.brightness = response[2]
                 device.temperature = response[3]
-
+                if device.callback is not None:
+                    device.callback(device.cbargs)
 
 class laurel:
     def __init__(self, user, password):
@@ -136,8 +137,13 @@ class laurel_device:
         self.id = device['id']
         self.mac = device['mac']
         self.type = device['type']
+        self.callback = None
         self.brightness = 0
         self.temperature = 0
+
+    def set_callback(self, callback, cbargs):
+        self.callback = callback
+        self.cbargs = cbargs
 
     def set_temperature(self, temperature):
         self.network.send_packet(self.id, 0xe2, [0x05, temperature])
