@@ -26,7 +26,7 @@ version = 0.1
 
 setup(
     name='laurel',
-    version=0.4,
+    version=0.1,
     author='Matthew Garrett',
     author_email='mjg59@google.com',
     url='http://github.com/google/python-laurel',
