@@ -22,11 +22,11 @@ import warnings
 
 dynamic_requires = []
 
-version = 0.1
+version = "0.2"
 
 setup(
     name='laurel',
-    version=0.1,
+    version=version,
     author='Matthew Garrett',
     author_email='mjg59@google.com',
     url='http://github.com/google/python-laurel',
