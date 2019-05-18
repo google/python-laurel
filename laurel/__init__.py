@@ -18,6 +18,9 @@ import requests
 
 API_TIMEOUT = 5
 
+class LaurelException(Exception):
+    pass
+
 def authenticate(username, password):
     """Authenticate with the API and get a token."""
     API_AUTH = "https://api2.xlink.cn/v2/user_auth"
@@ -27,7 +30,7 @@ def authenticate(username, password):
     try:
         return (r.json()['access_token'], r.json()['user_id'])
     except KeyError:
-        raise(AvionException('API authentication failed'))
+        raise(LaurelException('API authentication failed'))
 
 
 def get_devices(auth_token, user):
@@ -116,7 +119,6 @@ class laurel_mesh:
                 self.link.connect()
                 break
             except Exception as e:
-                print(e)
                 print("Failed to connect to %s" % device.mac, e)
                 self.link = None
                 pass
