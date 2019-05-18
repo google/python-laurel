@@ -73,7 +73,15 @@ def callback(link, data):
         for device in link.devices:
             if device.id == response[0]:
                 device.brightness = response[2]
-                device.temperature = response[3]
+                if device.brightness >= 128:
+                  device.brightness = device.brightness - 128
+                  device.red = int(((response[3] & 0xe0) >> 5) * 255 / 7)
+                  device.green = int(((response[3] & 0x1c) >> 2) * 255 / 7)
+                  device.blue = int((response[3] & 0x3) * 255 / 3)
+                  device.rgb = True
+                else:
+                  device.temperature = response[3]
+                  device.rgb = False
                 if device.callback is not None:
                     device.callback(device.cbargs)
 
@@ -142,6 +150,10 @@ class laurel_device:
         self.callback = None
         self.brightness = 0
         self.temperature = 0
+        self.red = 0
+        self.green = 0
+        self.blue = 0
+        self.rgb = False
 
     def set_callback(self, callback, cbargs):
         self.callback = callback
@@ -150,6 +162,12 @@ class laurel_device:
     def set_temperature(self, temperature):
         self.network.send_packet(self.id, 0xe2, [0x05, temperature])
         self.temperature = temperature
+
+    def set_rgb(self, red, green, blue):
+        self.network.send_packet(self.id, 0xe2, [0x04, red, green, blue])
+        self.red = red
+        self.green = green
+        self.blue = blue
 
     def set_brightness(self, brightness):
         self.network.send_packet(self.id, 0xd2, [brightness])
@@ -162,7 +180,8 @@ class laurel_device:
         self.network.send_packet(self.id, 0xda, [])
 
     def supports_temperature(self):
-        if self.type == 5 or \
+        if self.supports_rgb() or \
+           self.type == 5 or \
            self.type == 19 or \
            self.type == 20 or \
            self.type == 80 or \
@@ -170,5 +189,13 @@ class laurel_device:
            self.type == 85:
             return True
         return False
-           
-        
+
+    def supports_rgb(self):
+        if self.type == 6 or \
+           self.type == 7 or \
+           self.type == 8 or \
+           self.type == 21 or \
+           self.type == 22 or \
+           self.type == 23:
+            return True
+        return False
